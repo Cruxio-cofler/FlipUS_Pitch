@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FLIP™ · Clinical-Grade RCM Intelligence — U.S. Provider Briefing</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0f1117;--ink2:#3a3d4a;--ink3:#6b6f7e;
+  --rule:#e2e4ea;--surface:#f7f8fc;--surface2:#eef0f6;
+  --accent:#1a56db;--al:#e8effd;
+  --red:#c0392b;--rl:#fdecea;
+  --amber:#b7620a;--aml:#fef3e2;
+  --green:#1a7a3c;--gl:#e8f5ee;
+  --purple:#5b3db5;--pl:#eeebfc;
+  --dark:#0c1a2e;--dark2:#0f2440;
+}
+html,body{height:100%;font-family:'IBM Plex Sans',sans-serif;background:var(--dark);overflow:hidden}
+#deck{position:relative;width:100vw;height:100vh;overflow:hidden}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity .55s ease}
+.slide.active{opacity:1;pointer-events:all}
+#progress{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--purple));transition:width .4s ease;z-index:999}
+#nav{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:10px;z-index:999;background:rgba(12,26,46,.88);border:1px solid rgba(255,255,255,.1);border-radius:30px;padding:8px 16px;backdrop-filter:blur(12px)}
+.nav-btn{background:none;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);font-family:'IBM Plex Mono',monospace;font-size:11px;padding:5px 12px;border-radius:20px;cursor:pointer;transition:all .2s}
+.nav-btn:hover{background:rgba(255,255,255,.08);color:#fff;border-color:rgba(255,255,255,.3)}
+#slide-counter{font-family:'IBM Plex Mono',monospace;font-size:11px;color:rgba(255,255,255,.4);min-width:54px;text-align:center}
+#autoplay-btn{background:none;border:none;color:rgba(255,255,255,.5);font-size:16px;cursor:pointer;padding:2px 6px;transition:color .2s}
+#autoplay-btn:hover{color:#fff}
+#slide-dots{display:flex;gap:4px;align-items:center}
+.dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.2);transition:all .3s;cursor:pointer}
+.dot.active{background:#fff;width:14px;border-radius:3px}
+.slide-label{position:absolute;top:20px;right:24px;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.2)}
+.bg-dots{position:absolute;inset:0;opacity:.025;background-image:radial-gradient(circle,#fff 1px,transparent 1px);background-size:28px 28px;pointer-events:none}
+.logo-corner{position:absolute;top:20px;left:24px;display:flex;align-items:center;gap:8px;z-index:5}
+.lc-mark{width:24px;height:24px;background:linear-gradient(135deg,var(--accent),var(--purple));border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:#fff}
+.lc-name{font-size:12px;font-weight:600;color:rgba(255,255,255,.35);letter-spacing:-.2px}
+.lc-name span{color:rgba(255,255,255,.18)}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+@keyframes slideIn{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:none}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.scene-tag{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(26,86,219,.75);margin-bottom:10px}
+.scene-title{font-size:clamp(24px,2.8vw,36px);font-weight:700;color:#fff;line-height:1.2;margin-bottom:8px}
+.scene-sub{font-size:13.5px;color:rgba(255,255,255,.42);line-height:1.65;max-width:640px}
+.pad{padding:44px 60px;display:flex;flex-direction:column;justify-content:center;height:100%}
+
+/* ── TITLE ── */
+#s0{background:var(--dark);justify-content:center;align-items:center;text-align:center;
+  background-image:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(26,86,219,.18) 0%,transparent 65%),
+  radial-gradient(ellipse 60% 40% at 80% 80%,rgba(91,61,181,.12) 0%,transparent 60%)}
+.title-eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(26,86,219,.14);border:1px solid rgba(26,86,219,.3);border-radius:20px;padding:4px 14px;margin-bottom:24px}
+.teb-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 1.4s ease-in-out infinite}
+.title-eyebrow span{font-family:'IBM Plex Mono',monospace;font-size:11px;color:rgba(100,160,250,.9);letter-spacing:.08em}
+.title-main{font-size:clamp(42px,6vw,72px);font-weight:700;color:#fff;letter-spacing:-.03em;line-height:1.05;margin-bottom:14px}
+.title-main em{color:var(--accent);font-style:normal}
+.title-sub{font-size:16px;color:rgba(255,255,255,.45);max-width:560px;line-height:1.65;margin:0 auto 36px}
+.title-pipe{display:flex;align-items:center;gap:0;justify-content:center;flex-wrap:wrap;font-family:'IBM Plex Mono',monospace;font-size:11px}
+.tp{padding:6px 14px;border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.38)}
+.tp:first-child{border-radius:4px 0 0 4px}
+.tp:last-child{border-radius:0 4px 4px 0}
+.tp+.tp{border-left:none}
+.tp.hl{background:rgba(26,86,219,.14);border-color:rgba(26,86,219,.4);color:rgba(100,160,250,.9)}
+
+/* ── PROBLEM ── */
+#s1{background:var(--dark);background-image:radial-gradient(ellipse 70% 50% at 30% 50%,rgba(192,57,43,.1) 0%,transparent 60%)}
+.problem-title{font-size:12px;font-weight:500;color:rgba(255,255,255,.3);letter-spacing:.1em;text-transform:uppercase;font-family:'IBM Plex Mono',monospace;margin-bottom:16px}
+.problem-headline{font-size:clamp(24px,3vw,38px);font-weight:700;color:#fff;line-height:1.15;margin-bottom:30px;max-width:760px}
+.problem-headline .red{color:#f5776b}
+.problem-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:26px}
+.pstat{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:18px 14px;border-top:2px solid var(--bdr,rgba(255,255,255,.1))}
+.pstat-val{font-size:28px;font-weight:700;line-height:1;margin-bottom:6px;font-variant-numeric:tabular-nums}
+.pstat-lbl{font-size:11px;color:rgba(255,255,255,.42);line-height:1.5}
+.cause-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.cause-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:14px 15px;border-left:3px solid var(--cc,rgba(255,255,255,.12))}
+.cc-title{font-size:12.5px;font-weight:600;color:#fff;margin-bottom:5px}
+.cc-desc{font-size:11px;color:rgba(255,255,255,.4);line-height:1.55}
+
+/* ── WHY NOW ── */
+#s2{background:var(--dark);background-image:radial-gradient(ellipse 60% 60% at 80% 20%,rgba(26,86,219,.12) 0%,transparent 60%)}
+.why-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:6px}
+.why-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:11px;padding:18px 18px;border-top:2px solid var(--wc,rgba(255,255,255,.12));animation:fadeUp .45s ease forwards;opacity:0}
+.why-card:nth-child(1){animation-delay:.06s}.why-card:nth-child(2){animation-delay:.16s}.why-card:nth-child(3){animation-delay:.26s}.why-card:nth-child(4){animation-delay:.36s}
+.why-icon{font-size:20px;margin-bottom:9px}
+.why-name{font-size:14px;font-weight:600;color:#fff;margin-bottom:5px}
+.why-desc{font-size:12px;color:rgba(255,255,255,.42);line-height:1.6}
+
+/* ── SOLUTION (engine grid) ── */
+#s3{background:var(--dark);background-image:radial-gradient(ellipse 80% 60% at 50% 50%,rgba(26,86,219,.07) 0%,transparent 70%)}
+.engine-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:6px;margin-bottom:16px}
+.eng-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:14px 13px;transition:all .25s;border-top:2px solid var(--ec,rgba(255,255,255,.1));animation:fadeUp .45s ease forwards;opacity:0;position:relative}
+.eng-card:nth-child(1){animation-delay:.06s}.eng-card:nth-child(2){animation-delay:.14s}.eng-card:nth-child(3){animation-delay:.22s}.eng-card:nth-child(4){animation-delay:.30s}.eng-card:nth-child(5){animation-delay:.38s}.eng-card:nth-child(6){animation-delay:.46s}
+.eng-card:hover{background:rgba(255,255,255,.06);transform:translateY(-2px)}
+.eng-num{font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(255,255,255,.3);margin-bottom:8px;letter-spacing:.06em}
+.eng-icon{font-size:19px;margin-bottom:8px}
+.eng-name{font-size:13px;font-weight:600;color:#fff;line-height:1.3;margin-bottom:5px}
+.eng-desc{font-size:11px;color:rgba(255,255,255,.4);line-height:1.5}
+.gate-pill{position:absolute;top:13px;right:12px;font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:.05em;color:rgba(245,119,107,.8);background:rgba(192,57,43,.12);border:1px solid rgba(192,57,43,.25);padding:2px 6px;border-radius:5px}
+.result-banner{background:rgba(26,122,60,.09);border:1px solid rgba(26,122,60,.22);border-radius:9px;padding:13px 16px;font-size:12.5px;color:rgba(255,255,255,.6);line-height:1.55}
+.result-banner strong{color:#5dcaa5;font-weight:600}
+
+/* ── ARCHITECTURE ── */
+#s4{background:var(--dark);background-image:radial-gradient(ellipse 60% 60% at 75% 35%,rgba(91,61,181,.1) 0%,transparent 60%)}
+.arch-flow{display:flex;align-items:stretch;gap:0;margin-top:8px;margin-bottom:20px}
+.arch-step{flex:1;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:20px 18px;border-top:2px solid var(--asc,rgba(255,255,255,.12))}
+.arch-arrow{display:flex;align-items:center;color:rgba(255,255,255,.2);font-size:22px;padding:0 14px}
+.as-num{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--asc);letter-spacing:.08em;margin-bottom:9px;font-weight:600}
+.as-title{font-size:15px;font-weight:600;color:#fff;margin-bottom:7px}
+.as-desc{font-size:12px;color:rgba(255,255,255,.42);line-height:1.6}
+.emr-strip{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:11px;padding:16px 18px}
+.emr-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(133,183,235,.8);margin-bottom:12px}
+.emr-logos{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:11px}
+.emr-chip{font-family:'IBM Plex Mono',monospace;font-size:11px;color:rgba(255,255,255,.6);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:5px 11px}
+.emr-note{font-size:11px;color:rgba(255,255,255,.38);line-height:1.55}
+
+/* ── EARN MORE ── */
+#s5{background:var(--dark);background-image:radial-gradient(ellipse 70% 60% at 50% 0%,rgba(26,122,60,.16) 0%,transparent 58%),radial-gradient(ellipse 50% 50% at 85% 80%,rgba(26,86,219,.08) 0%,transparent 55%)}
+.worth-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(26,122,60,.13);border:1px solid rgba(26,122,60,.28);border-radius:20px;padding:4px 14px;margin-bottom:16px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:rgba(93,202,165,.9);letter-spacing:.08em}
+.worth-headline{font-size:clamp(26px,3.4vw,42px);font-weight:700;color:#fff;line-height:1.12;letter-spacing:-.02em;margin-bottom:24px}
+.worth-headline .green{color:#5dcaa5}
+.earn-layout{display:grid;grid-template-columns:0.85fr 1.15fr;gap:26px;align-items:center}
+.bigstat{background:rgba(26,122,60,.08);border:1px solid rgba(26,122,60,.22);border-radius:14px;padding:26px 24px}
+.bigstat-val{font-size:clamp(34px,4.4vw,54px);font-weight:700;color:#5dcaa5;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin-bottom:6px}
+.bigstat-unit{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(93,202,165,.65);margin-bottom:14px}
+.bigstat-desc{font-size:12.5px;color:rgba(255,255,255,.45);line-height:1.6;margin-bottom:12px}
+.bigstat-lift{font-size:13px;font-weight:600;color:#5dcaa5;font-style:italic}
+.recovery-where-lbl{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:11px}
+.rec-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rec-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:14px 14px;border-left:3px solid var(--rcc,#5dcaa5)}
+.rec-title{font-size:12.5px;font-weight:600;color:#fff;margin-bottom:4px}
+.rec-desc{font-size:11px;color:rgba(255,255,255,.4);line-height:1.5}
+
+/* ── SAVE MORE (comparison) ── */
+#s6{background:var(--dark);background-image:radial-gradient(ellipse 60% 50% at 20% 55%,rgba(26,86,219,.08) 0%,transparent 55%)}
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:8px;margin-bottom:18px}
+.comp-col{border-radius:12px;padding:18px;border:1px solid var(--cb)}
+.comp-col.reactive{background:rgba(192,57,43,.06);--cb:rgba(192,57,43,.22)}
+.comp-col.preventive{background:rgba(26,122,60,.06);--cb:rgba(26,122,60,.22)}
+.comp-head{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px;font-weight:600}
+.comp-col.reactive .comp-head{color:#f5776b}
+.comp-col.preventive .comp-head{color:#5dcaa5}
+.comp-row{display:flex;gap:9px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:12.5px;color:rgba(255,255,255,.6);line-height:1.5}
+.comp-row:last-child{border-bottom:none}
+.comp-ico{flex-shrink:0;margin-top:1px;font-size:12px}
+.comp-col.reactive .comp-ico{color:#f5776b}
+.comp-col.preventive .comp-ico{color:#5dcaa5}
+.save-note{background:rgba(26,86,219,.08);border:1px solid rgba(26,86,219,.22);border-radius:9px;padding:13px 16px;font-size:12.5px;color:rgba(255,255,255,.6);line-height:1.55}
+.save-note strong{color:#85b7eb;font-weight:600}
+
+/* ── ROI ── */
+#s7{background:var(--dark);background-image:radial-gradient(ellipse 70% 60% at 50% 0%,rgba(26,86,219,.14) 0%,transparent 58%);justify-content:center;align-items:center;text-align:center}
+.roi-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(26,86,219,.13);border:1px solid rgba(26,86,219,.3);border-radius:20px;padding:4px 14px;margin-bottom:18px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:rgba(100,160,250,.9);letter-spacing:.08em}
+.roi-headline{font-size:clamp(26px,3.6vw,44px);font-weight:700;color:#fff;line-height:1.12;letter-spacing:-.02em;margin-bottom:30px}
+.roi-stats{display:flex;justify-content:center;gap:13px;flex-wrap:wrap;margin-bottom:26px}
+.roi-stat{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:20px 26px;min-width:160px;border-top:2px solid var(--roc,rgba(255,255,255,.1))}
+.roi-val{font-size:32px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1;margin-bottom:7px}
+.roi-lbl{font-size:11px;color:rgba(255,255,255,.4);line-height:1.45}
+.roi-highlight{font-size:14px;color:rgba(255,255,255,.62);max-width:680px;margin:0 auto 18px;line-height:1.6}
+.roi-highlight strong{color:#85b7eb;font-weight:700}
+.roi-disclaimer{font-size:10.5px;color:rgba(255,255,255,.28);max-width:660px;margin:0 auto;line-height:1.55;font-family:'IBM Plex Mono',monospace}
+
+/* ── MARKET ── */
+#s8{background:var(--dark);background-image:radial-gradient(ellipse 60% 50% at 80% 30%,rgba(91,61,181,.1) 0%,transparent 58%)}
+.market-layout{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:center;margin-top:8px}
+.bar-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:18px}
+.bar-title{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:16px}
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:13px}
+.bar-lbl{font-size:11px;color:rgba(255,255,255,.5);min-width:118px;line-height:1.35}
+.bar-track{flex:1;height:22px;background:rgba(255,255,255,.04);border-radius:5px;overflow:hidden}
+.bar-fill{height:100%;border-radius:5px;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:#fff}
+.bar-note{font-size:11px;color:rgba(255,255,255,.4);line-height:1.55;padding-top:6px;border-top:1px solid rgba(255,255,255,.05);margin-top:4px}
+.bar-note strong{color:#afa9ec}
+.land-lbl{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:11px}
+.land-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:14px 15px;margin-bottom:9px;border-left:3px solid var(--lc,var(--accent))}
+.land-stat{font-size:17px;font-weight:700;color:#fff;margin-bottom:3px}
+.land-desc{font-size:11px;color:rgba(255,255,255,.4);line-height:1.5}
+
+/* ── WHY FLIP WINS ── */
+#s9{background:var(--dark);background-image:radial-gradient(ellipse 60% 50% at 70% 40%,rgba(91,61,181,.09) 0%,transparent 55%)}
+.win-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:8px;margin-bottom:16px}
+.win-col{border-radius:12px;padding:18px;border:1px solid var(--wb)}
+.win-col.flip{background:rgba(26,86,219,.07);--wb:rgba(26,86,219,.25)}
+.win-col.incumbent{background:rgba(255,255,255,.02);--wb:rgba(255,255,255,.08)}
+.win-head{display:flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px;font-weight:600}
+.win-col.flip .win-head{color:#85b7eb}
+.win-col.incumbent .win-head{color:rgba(255,255,255,.4)}
+.win-row{display:flex;gap:9px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:12px;line-height:1.5}
+.win-row:last-child{border-bottom:none}
+.win-ico{flex-shrink:0;margin-top:1px;font-size:12px}
+.win-col.flip .win-row{color:rgba(255,255,255,.7)}
+.win-col.flip .win-ico{color:#5dcaa5}
+.win-col.incumbent .win-row{color:rgba(255,255,255,.42)}
+.win-col.incumbent .win-ico{color:#f5776b}
+.category-banner{background:rgba(91,61,181,.1);border:1px solid rgba(91,61,181,.28);border-radius:9px;padding:13px 16px;font-size:13px;color:rgba(255,255,255,.62);line-height:1.55;text-align:center}
+.category-banner strong{color:#afa9ec;font-weight:600}
+
+/* ── CLOSE ── */
+#s10{background:var(--dark);justify-content:center;align-items:center;text-align:center;
+  background-image:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(26,86,219,.18) 0%,transparent 65%),
+  radial-gradient(ellipse 60% 40% at 50% 100%,rgba(91,61,181,.14) 0%,transparent 60%)}
+.close-eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(26,86,219,.14);border:1px solid rgba(26,86,219,.3);border-radius:20px;padding:4px 14px;margin-bottom:24px}
+.close-eyebrow span{font-family:'IBM Plex Mono',monospace;font-size:11px;color:rgba(100,160,250,.9);letter-spacing:.08em}
+.close-headline{font-size:clamp(30px,4.6vw,58px);font-weight:700;color:#fff;letter-spacing:-.03em;line-height:1.08;margin-bottom:16px}
+.close-headline em{color:var(--accent);font-style:normal}
+.close-sub{font-size:16px;color:rgba(255,255,255,.45);max-width:560px;line-height:1.65;margin:0 auto 32px}
+.cta-btn{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,var(--accent),var(--purple));color:#fff;font-weight:600;font-size:15px;padding:14px 30px;border-radius:30px;letter-spacing:.01em;box-shadow:0 8px 30px rgba(26,86,219,.35)}
+.cta-btn span{font-family:'IBM Plex Mono',monospace;font-size:14px}
+.close-tags{display:flex;gap:0;justify-content:center;flex-wrap:wrap;font-family:'IBM Plex Mono',monospace;font-size:11px;margin-top:30px}
+.close-footer{margin-top:30px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:rgba(255,255,255,.16);letter-spacing:.05em}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<div id="deck">
+
+<!-- ═══ S0 TITLE ═══ -->
+<div class="slide active" id="s0">
+  <div class="bg-dots"></div>
+  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:40px">
+    <div class="title-eyebrow"><div class="teb-dot"></div><span>FLIP™ · Provider Intelligence &nbsp;·&nbsp; Investor Briefing 2026</span></div>
+    <div class="title-main">Clinical-Grade<br>RCM <em>Intelligence.</em></div>
+    <div class="title-sub">The pre-submission clinical audit layer that sits in front of every claim — wrapping any EMR and defending revenue before it is ever billed.</div>
+    <div class="title-pipe">
+      <div class="tp">Document Intake</div><div class="tp">CCCD</div><div class="tp hl">Billing Engine</div><div class="tp">Pre-Submission Audit</div><div class="tp">Portal Upload</div><div class="tp">Query Engine</div>
+    </div>
+    <div style="margin-top:30px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:rgba(255,255,255,.28);letter-spacing:.04em">U.S. Healthcare Providers &nbsp;·&nbsp; Medicare &nbsp;·&nbsp; Medicare Advantage &nbsp;·&nbsp; Commercial</div>
+    <div style="margin-top:14px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:rgba(255,255,255,.16);letter-spacing:.06em">USE ARROW KEYS OR BUTTONS TO NAVIGATE</div>
+  </div>
+  <div class="slide-label">01 / 11 · Title</div>
+</div>
+
+<!-- ═══ S1 PROBLEM ═══ -->
+<div class="slide" id="s1">
+  <div class="bg-dots"></div>
+  <div class="logo-corner"><div class="lc-mark">FP</div><div class="lc-name">FLIP <span>· Provider Intelligence</span></div></div>
+  <div class="pad">
+    <div class="problem-title">The Problem · U.S. Provider Revenue Leakage</div>
+    <div class="problem-headline">Providers are denied, underpaid, and audited —<br><span class="red">after the claim is already gone.</span></div>
+    <div class="problem-stats">
+      <div class="pstat" style="--bdr:#c0392b"><div class="pstat-val" style="color:#f5776b">10–15%</div><div class="pstat-lbl">Hospital denial rate — some systems exceed 20%</div></div>
+      <div class="pstat" style="--bdr:#b7620a"><div class="pstat-val" style="color:#ef9f27">~50%</div><div class="pstat-lbl">Of those denials are fully preventable</div></div>
+      <div class="pstat" style="--bdr:#5b3db5"><div class="pstat-val" style="color:#afa9ec">+20% / yr</div><div class="pstat-lbl">Growth in payer medical-necessity queries</div></div>
+      <div class="pstat" style="--bdr:#1a56db"><div class="pstat-val" style="color:#85b7eb">$10–50</div><div class="pstat-lbl">To rework every denied claim, on top of $2–25 to file</div></div>
+    </div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(255,255,255,.22);letter-spacing:.1em;text-transform:uppercase;margin-bottom:11px">Why it keeps happening</div>
+    <div class="cause-grid">
+      <div class="cause-card" style="--cc:#c0392b"><div class="cc-title">No clinical audit before submission</div><div class="cc-desc">Most providers only audit after a denial. The defect ships — then 100 more claims repeat it.</div></div>
+      <div class="cause-card" style="--cc:#b7620a"><div class="cc-title">RCM vendors receive the claim "as is"</div><div class="cc-desc">Outsourced coders bill what is on the face of the note. Garbage in, garbage out.</div></div>
+      <div class="cause-card" style="--cc:#5b3db5"><div class="cc-title">Reactive, slow feedback loop</div><div class="cc-desc">It takes weeks to learn why a claim denied; by then the same error is everywhere.</div></div>
+    </div>
+  </div>
+  <div class="slide-label">02 / 11 · Problem</div>
+</div>
+
+<!-- ═══ S2 WHY NOW ═══ -->
+<div class="slide" id="s2">
+  <div class="bg-dots"></div>
+  <div class="logo-corner"><div class="lc-mark">FP</div><div class="lc-name">FLIP <span>· Provider Intelligence</span></div></div>
+  <div class="pad">
+    <div class="scene-tag">Why Now</div>
+    <div class="scene-title">The ground is shifting —<br>and it is shifting against the provider.</div>
+    <div class="why-grid">
+      <div class="why-card" style="--wc:#1a56db"><div class="why-icon">📈</div><div class="why-name">Medicare Advantage expansion</div><div class="why-desc">Aggressive medical-necessity reviews now demand extensive, day-wise clinical documentation.</div></div>
+      <div class="why-card" style="--wc:#1a7a3c"><div class="why-icon">⚖️</div><div class="why-name">Value-based &amp; risk contracts</div><div class="why-desc">HCC / RAF accuracy drives reimbursement — the clinical record must prove complexity.</div></div>
+      <div class="why-card" style="--wc:#5b3db5"><div class="why-icon">🤖</div><div class="why-name">Payers deploy AI on your notes</div><div class="why-desc">Insurers scan documentation for inconsistencies. Providers need pre-submission AI to counter it.</div></div>
+      <div class="why-card" style="--wc:#b7620a"><div class="why-icon">📋</div><div class="why-name">No Surprises Act &amp; estimates</div><div class="why-desc">New documentation and good-faith-estimate burden for out-of-network and self-pay.</div></div>
+    </div>
+  </div>
+  <div class="slide-label">03 / 11 · Why Now</div>
+</div>
+
+<!-- ═══ S3 SOLUTION ═══ -->
+<div class="slide" id="s3">
+  <div class="bg-dots"></div>
+  <div class="logo-corner"><div class="lc-mark">FP</div><div class="lc-name">FLIP <span>· Provider Intelligence</span></div></div>
+  <div class="pad">
+    <div class="scene-tag">The Solution</div>
+    <div class="scene-title" style="font-size:clamp(22px,2.6vw,33px)">FLIP runs the payer's integrity logic <em style="color:#85b7eb;font-style:normal">before you submit.</em></div>
+    <div class="scene-sub" style="margin-bottom:6px">A six-stage pre-submission pipeline with a hard gate at every stage — all built on the CCCD, a date-sequenced clinical truth layer that ties every billed line back to a note, order, or result.</div>
+    <div class="engine-grid">
+      <div class="eng-card" style="--ec:#0f6e56"><div class="eng-num">STAGE 01</div><div class="eng-icon">📥</div><div class="eng-name">Document Intake</div><div class="eng-desc">OCR + classify + completeness gate</div><div class="gate-pill">GATE</div></div>
+      <div class="eng-card" style="--ec:#1a56db"><div class="eng-num">STAGE 02</div><div class="eng-icon">🧬</div><div class="eng-name">CCCD</div><div class="eng-desc">Unified day-wise clinical truth layer</div><div class="gate-pill">GATE</div></div>
+      <div class="eng-card" style="--ec:#b7620a"><div class="eng-num">STAGE 03</div><div class="eng-icon">🧾</div><div class="eng-name">Billing Engine</div><div class="eng-desc">Payer rules · anti-inflation logic</div><div class="gate-pill">GATE</div></div>
+      <div class="eng-card" style="--ec:#c0392b"><div class="eng-num">STAGE 04</div><div class="eng-icon">🛡️</div><div class="eng-name">Pre-Submission Audit</div><div class="eng-desc">10+ dimensions · denial-risk score</div><div class="gate-pill">GATE</div></div>
+      <div class="eng-card" style="--ec:#5b3db5"><div class="eng-num">STAGE 05</div><div class="eng-icon">🔐</div><div class="eng-name">Portal Upload</div><div class="eng-desc">Secure vault · slot mapping · retry</div><div class="gate-pill">GATE</div></div>
+      <div class="eng-card" style="--ec:#6b6f7e"><div class="eng-num">STAGE 06</div><div class="eng-icon">🔄</div><div class="eng-name">Query Engine</div><div class="eng-desc">Evidence-backed, expert-in-loop replies</div><div class="gate-pill">GATE</div></div>
+    </div>
+    <div class="result-banner"><strong>Result at each gate:</strong> a corrected claim + a full audit trail + a denial-risk score — handed to your billing team or RCM vendor before submission.</div>
+  </div>
+  <div class="slide-label">04 / 11 · Solution</div>
+</div>
+
+<!-- ═══ S4 ARCHITECTURE ═══ -->
+<div class="slide" id="s4">
+  <div class="bg-dots"></div>
+  <div class="logo-corner"><div class="lc-mark">FP</div><div class="lc-name">FLIP <span>· Provider Intelligence</span></div></div>
+  <div class="pad">
+    <div class="scene-tag">Architecture</div>
+    <div class="scene-title" style="font-size:clamp(22px,2.6vw,33px)">A read-only sidecar.<br>No EMR change. No rip-and-replace.</div>
+    <div class="arch-flow">
+      <div class="arch-step" style="--asc:#5dcaa5"><div class="as-num">1 · INGEST</div><div class="as-title">Pull, don't disrupt</div><div class="as-desc">FHIR API, HL7 v2, secure flat-file extracts, and NLP/OCR on clinical notes — pulled on a daily schedule.</div></div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-step" style="--asc:#85b7eb"><div class="as-num">2 · STRUCTURE &amp; AUDIT</div><div class="as-title">Map to truth, score risk</div><div class="as-desc">Map to the CCCD clinical truth layer, run the six-stage engine, and score denial risk across 10+ dimensions.</div></div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-step" style="--asc:#afa9ec"><div class="as-num">3 · RETURN</div><div class="as-title">Emit corrections</div><div class="as-desc">Emit a correction package (JSON / XML) to the billing team or RCM vendor. Nothing is written back to the EMR.</div></div>
+    </div>
+    <div class="emr-strip">
+      <div class="emr-label">Wraps any EMR</div>
+      <div class="emr-logos">
+        <div class="emr-chip">Epic</div><div class="emr-chip">Oracle Cerner</div><div class="emr-chip">Meditech</div><div class="emr-chip">athenahealth</div><div class="emr-chip">eClinicalWorks</div><div class="emr-chip">NextGen</div>
+      </div>
+      <div class="emr-note">A secure, read-only process — the hospital keeps its existing EMR and the vendor keeps its fee structure.</div>
+    </div>
+  </div>
+  <div class="slide-label">05 / 11 · Architecture</div>
+</div>
+
+<!-- ═══ S5 EARN MORE ═══ -->
+<div class="slide" id="s5">
+  <div class="bg-dots"></div>
+  <div class="logo-corner"><div class="lc-mark">FP</div><div class="lc-name">FLIP <span>· Provider Intelligence</span></div></div>
+  <div class="pad">
+    <div class="worth-tag"><div class="teb-dot" style="background:#5dcaa5"></div>The Worth · Earn More</div>
+    <div class="worth-headline"><span class="green">+3–5%</span> of net patient revenue, recovered.</div>
+    <div class="earn-layout">
+      <div class="bigstat">
+        <div class="bigstat-val">+$1.5M<span style="font-size:.5em;color:rgba(255,255,255,.4);font-weight:500"> to </span>+$4M</div>
+        <div class="bigstat-unit">Per medium hospital / year</div>
+        <div class="bigstat-desc">Recovered annually on a 200-bed hospital with $50–80M in net patient revenue and ~15,000 discharges.</div>
+        <div class="bigstat-lift">= a 3–5% lift on net patient revenue</div>
+      </div>
+      <div>
+        <div class="recovery-where-lbl">Where the recovery comes from</div>
+        <div class="rec-grid">
+          <div class="rec-card" style="--rcc:#f5776b"><div class="rec-title">Preventable denials, stopped</div><div class="rec-desc">Half of a 10–15% denial rate, caught before submission.</div></div>
+          <div class="rec-card" style="--rcc:#85b7eb"><div class="rec-title">Under-coding &amp; HCC / RAF recapture</div><div class="rec-desc">Documented complexity that was never billed.</div></div>
+          <div class="rec-card" style="--rcc:#ef9f27"><div class="rec-title">Underpayment recovery</div><div class="rec-desc">Expected-vs-paid variances on every remit.</div></div>
+          <div class="rec-card" style="--rcc:#5dcaa5"><div class="rec-title">Accelerated cash</div><div class="rec-desc">Clean first-pass claims compress days-in-AR.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-label">06 / 11 · Earn More</div>
+</div>
+
+<!-- ═══ S6 SAVE MORE ═══ -->
+<div class="slide" id="s6">
+  <div class="bg-dots"></div>
+  <div class="logo-corner"><div class="lc-mark">FP</div><div class="lc-name">FLIP <span>· Provider Intelligence</span></div></div>
+  <div class="pad">
+    <div class="worth-tag" style="background:rgba(26,86,219,.13);border-color:rgba(26,86,219,.28);color:rgba(100,160,250,.9)"><div class="teb-dot" style="background:#85b7eb"></div>The Worth · Save More</div>
+    <div class="worth-headline"><span style="color:#85b7eb">30–50%</span> lower effective cost per claim.</div>
+    <div class="compare-grid">
+      <div class="comp-col reactive">
+        <div class="comp-head">Today · Reactive</div>
+        <div class="comp-row"><span class="comp-ico">✕</span><div>$12–25 to file an inpatient claim — then $10–50 again to rework each denial</div></div>
+        <div class="comp-row"><span class="comp-ico">✕</span><div>Denial-management FTEs working rejections after the fact</div></div>
+        <div class="comp-row"><span class="comp-ico">✕</span><div>Weeks of slow feedback; the same error repeats across 100+ claims</div></div>
+        <div class="comp-row"><span class="comp-ico">✕</span><div>Cash trapped in days-in-AR while claims bounce</div></div>
+      </div>
+      <div class="comp-col preventive">
+        <div class="comp-head">With FLIP · Preventive</div>
+        <div class="comp-row"><span class="comp-ico">✓</span><div>Clean, CCCD-backed first-pass claims — rework and denial follow-up largely eliminated</div></div>
+        <div class="comp-row"><span class="comp-ico">✓</span><div>Denial-management effort redeployed; fewer rejections to chase</div></div>
+        <div class="comp-row"><span class="comp-ico">✓</span><div>Same-day, claim-level feedback stops a defect before it spreads</div></div>
+        <div class="comp-row"><span class="comp-ico">✓</span><div>Faster, more predictable cash as first-pass acceptance rises</div></div>
+      </div>
+    </div>
+    <div class="save-note"><strong>Zero switching cost:</strong> achieved without changing the EMR or the RCM vendor's fee structure.</div>
+  </div>
+  <div class="slide-label">07 / 11 · Save More</div>
+</div>
+
+<!-- ═══ S7 ROI ═══ -->
+<div class="slide" id="s7">
+  <div class="bg-dots"></div>
+  <div class="logo-corner"><div class="lc-mark">FP</div><div class="lc-name">FLIP <span>· Provider Intelligence</span></div></div>
+  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:40px">
+    <div class="roi-tag"><div class="teb-dot"></div>Illustrative ROI</div>
+    <div class="roi-headline">One 200-bed hospital.<br>One year.</div>
+    <div class="roi-stats">
+      <div class="roi-stat" style="--roc:#85b7eb"><div class="roi-val" style="color:#85b7eb">$65M</div><div class="roi-lbl">Net patient revenue<br>(midpoint of $50–80M)</div></div>
+      <div class="roi-stat" style="--roc:#5dcaa5"><div class="roi-val" style="color:#5dcaa5">+$2.6M</div><div class="roi-lbl">Revenue recovered<br>at a 4% net improvement</div></div>
+      <div class="roi-stat" style="--roc:#ef9f27"><div class="roi-val" style="color:#ef9f27">−40%</div><div class="roi-lbl">Effective cost per claim<br>(mid of 30–50%)</div></div>
+      <div class="roi-stat" style="--roc:#afa9ec"><div class="roi-val" style="color:#afa9ec">~900</div><div class="roi-lbl">Preventable denials<br>avoided per year</div></div>
+    </div>
+    <div class="roi-highlight"><strong>$2.6M+</strong> in annual value from a single mid-size hospital — before counting accelerated cash and avoided write-offs.</div>
+    <div class="roi-disclaimer">Illustrative model built on published industry ranges (denial rates, per-claim cost, net-revenue improvement). Actual results vary by case mix, payer mix, and baseline denial rate.</div>
+  </div>
+  <div class="slide-label">08 / 11 · ROI</div>
+</div>
+
+<!-- ═══ S8 MARKET ═══ -->
+<div class="slide" id="s8">
+  <div class="bg-dots"></div>
+  <div class="logo-corner"><div class="lc-mark">FP</div><div class="lc-name">FLIP <span>· Provider Intelligence</span></div></div>
+  <div class="pad">
+    <div class="scene-tag">Market</div>
+    <div class="scene-title" style="font-size:clamp(22px,2.6vw,33px)">A $120–150B market with a<br><em style="color:#afa9ec;font-style:normal">zero-penetrated wedge.</em></div>
+    <div class="market-layout">
+      <div class="bar-card">
+        <div class="bar-title">U.S. RCM opportunity ($B)</div>
+        <div class="bar-row"><div class="bar-lbl">Total U.S. RCM market</div><div class="bar-track"><div class="bar-fill" style="width:100%;background:linear-gradient(90deg,#1a3a6e,#1a56db)">$120–150B</div></div></div>
+        <div class="bar-row"><div class="bar-lbl">AI-driven RCM segment</div><div class="bar-track"><div class="bar-fill" style="width:52%;background:linear-gradient(90deg,#3a2c7a,#5b3db5)">growing 18–22% CAGR</div></div></div>
+        <div class="bar-row"><div class="bar-lbl">Pre-submission clinical-audit layer</div><div class="bar-track" style="display:flex;align-items:center"><div class="bar-fill" style="width:9%;background:#1a7a3c;min-width:18px"></div><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:#5dcaa5;padding-left:9px">≈ un-served today</span></div></div>
+        <div class="bar-note">AI-driven RCM is growing <strong>18–22% CAGR</strong> — and the pre-submission clinical-audit layer inside it is essentially un-served today.</div>
+      </div>
+      <div>
+        <div class="land-lbl">Where FLIP lands first</div>
+        <div class="land-card" style="--lc:#c0392b"><div class="land-stat">2,500–3,000 hospitals</div><div class="land-desc">High denial rates and complex payer mix — the sharpest pain, the fastest payback.</div></div>
+        <div class="land-card" style="--lc:#1a56db"><div class="land-stat">&gt;70% of independent practices</div><div class="land-desc">Already outsource some RCM — and their vendor has no pre-submission audit.</div></div>
+        <div class="land-card" style="--lc:#1a7a3c"><div class="land-stat">Sits before the handoff</div><div class="land-desc">Makes every existing in-house team and RCM vendor measurably more effective.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-label">09 / 11 · Market</div>
+</div>
+
+<!-- ═══ S9 WHY FLIP WINS ═══ -->
+<div class="slide" id="s9">
+  <div class="bg-dots"></div>
+  <div class="logo-corner"><div class="lc-mark">FP</div><div class="lc-name">FLIP <span>· Provider Intelligence</span></div></div>
+  <div class="pad">
+    <div class="scene-tag">Why FLIP Wins</div>
+    <div class="scene-title" style="font-size:clamp(22px,2.6vw,33px)">A new category — no incumbent has this stack.</div>
+    <div class="win-grid">
+      <div class="win-col flip">
+        <div class="win-head"><span>▰</span> FLIP delivers</div>
+        <div class="win-row"><span class="win-ico">✓</span><div>Six-stage pre-submission pipeline with a hard gate at every stage</div></div>
+        <div class="win-row"><span class="win-ico">✓</span><div>CCCD — a date-sequenced clinical truth layer linking every billed line to evidence</div></div>
+        <div class="win-row"><span class="win-ico">✓</span><div>Expert-in-the-loop query engine with a growing justification library</div></div>
+        <div class="win-row"><span class="win-ico">✓</span><div>Wrapper architecture that runs over any EMR without replacing it</div></div>
+      </div>
+      <div class="win-col incumbent">
+        <div class="win-head"><span>▱</span> Incumbent RCM vendors</div>
+        <div class="win-row"><span class="win-ico">✕</span><div>Audit only after denial — reactive, never preventive</div></div>
+        <div class="win-row"><span class="win-ico">✕</span><div>No unified clinical truth layer shared by clinicians and coders</div></div>
+        <div class="win-row"><span class="win-ico">✕</span><div>Generic denial letters with no clinical evidence assembled</div></div>
+        <div class="win-row"><span class="win-ico">✕</span><div>Paid for throughput, not for first-pass accuracy</div></div>
+      </div>
+    </div>
+    <div class="category-banner">This is not an incremental improvement. It is a new category: <strong>Clinical-Grade RCM Intelligence.</strong></div>
+  </div>
+  <div class="slide-label">10 / 11 · Why FLIP Wins</div>
+</div>
+
+<!-- ═══ S10 CLOSE ═══ -->
+<div class="slide" id="s10">
+  <div class="bg-dots"></div>
+  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:40px">
+    <div class="close-eyebrow"><div class="teb-dot"></div><span>The Ask · Run FLIP on your claims</span></div>
+    <div class="close-headline">Stop denials before they happen.<br>Recover revenue you've <em>already earned.</em></div>
+    <div class="close-sub">Let's run FLIP on your claims — pre-submission, read-only, in front of your existing stack.</div>
+    <div class="cta-btn"><span>→</span> Request a pilot</div>
+    <div class="close-tags">
+      <div class="tp">Medicare</div><div class="tp">Medicare Advantage</div><div class="tp hl">Commercial</div>
+    </div>
+    <div class="close-footer">FLIP™ · Provider Intelligence &nbsp;·&nbsp; Confidential — Investor &amp; Partner Briefing 2026</div>
+  </div>
+  <div class="slide-label">11 / 11 · The Ask</div>
+</div>
+
+</div><!-- /deck -->
+
+<div id="nav">
+  <button class="nav-btn" onclick="prevSlide()">← Prev</button>
+  <div id="slide-dots"></div>
+  <div id="slide-counter">1 / 11</div>
+  <button class="nav-btn" onclick="nextSlide()">Next →</button>
+  <button id="autoplay-btn" onclick="toggleAuto()" title="Auto-play slides">▶</button>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const dotsEl = document.getElementById('slide-dots');
+const counter = document.getElementById('slide-counter');
+const prog = document.getElementById('progress');
+const autoBtn = document.getElementById('autoplay-btn');
+let cur = 0, autoTimer = null, isAuto = false;
+const DELAY = 8000;
+
+slides.forEach((_,i)=>{
+  const d = document.createElement('div');
+  d.className='dot'+(i===0?' active':'');
+  d.onclick=()=>goTo(i);
+  dotsEl.appendChild(d);
+});
+
+function goTo(n){
+  slides[cur].classList.remove('active');
+  dotsEl.children[cur].classList.remove('active');
+  cur=Math.max(0,Math.min(n,slides.length-1));
+  slides[cur].classList.add('active');
+  dotsEl.children[cur].classList.add('active');
+  counter.textContent=`${cur+1} / ${slides.length}`;
+  prog.style.width=`${((cur+1)/slides.length)*100}%`;
+  const animated=slides[cur].querySelectorAll('.why-card,.eng-card');
+  animated.forEach(el=>{const a=el.style.animation;el.style.animation='none';el.offsetHeight;el.style.animation=a});
+}
+function nextSlide(){goTo(cur+1<slides.length?cur+1:0)}
+function prevSlide(){goTo(cur-1>=0?cur-1:slides.length-1)}
+function toggleAuto(){
+  isAuto=!isAuto;
+  autoBtn.textContent=isAuto?'⏸':'▶';
+  if(isAuto){autoTimer=setInterval(nextSlide,DELAY)}
+  else{clearInterval(autoTimer)}
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();nextSlide()}
+  if(e.key==='ArrowLeft'){e.preventDefault();prevSlide()}
+  if(e.key==='Escape'){isAuto=false;clearInterval(autoTimer);autoBtn.textContent='▶'}
+});
+prog.style.width=`${(1/slides.length)*100}%`;
+</script>
+</body>
+</html>
